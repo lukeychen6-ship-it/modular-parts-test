@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://cofdesbk3t8j7"]
+
+[ext_resource type="Script" uid="uid://c3psn0i6alfd3" path="res://part.gd" id="1_l6pk7"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_6kawv"]
+friction = 0.3
+bounce = 0.1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_iclsy"]
+top_radius = 0.0
+bottom_radius = 0.8
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_ee548"]
+radius = 0.8
+
+[node name="NoseCone" type="RigidBody3D" unique_id=1947586077]
+mass = 5.0
+physics_material_override = SubResource("PhysicsMaterial_6kawv")
+continuous_cd = true
+script = ExtResource("1_l6pk7")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=587118560]
+mesh = SubResource("CylinderMesh_iclsy")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=108383982]
+shape = SubResource("CylinderShape3D_ee548")
+
+[node name="BottomAttachment" type="Marker3D" parent="." unique_id=472535349]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)

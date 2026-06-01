@@ -1,0 +1,47 @@
+[gd_scene format=3 uid="uid://jrmyjwr182fk"]
+
+[ext_resource type="PackedScene" uid="uid://dk4hylpjjpiwk" path="res://Engine.tscn" id="1_3ld7y"]
+[ext_resource type="Script" uid="uid://dxl73kporbw8h" path="res://assembly_manager.gd" id="1_v6vo6"]
+[ext_resource type="Script" uid="uid://bvy1se6kof7qr" path="res://rocket_controller.gd" id="2_7s7gv"]
+[ext_resource type="PackedScene" uid="uid://cofdesbk3t8j7" path="res://NoseCone.tscn" id="2_xvabq"]
+[ext_resource type="PackedScene" uid="uid://byh0vvkflj2ya" path="res://FuelTank.tscn" id="3_v6vo6"]
+[ext_resource type="PackedScene" uid="uid://cxgaovv3f62o5" path="res://BuildManager.tscn" id="6_7s7gv"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_7s7gv"]
+size = Vector3(50, 1, 50)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_l6gie"]
+size = Vector2(50, 50)
+
+[node name="World" type="Node3D" unique_id=1850233647]
+
+[node name="AssemblyManager" type="Node3D" parent="." unique_id=609623267]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+script = ExtResource("1_v6vo6")
+
+[node name="SpringArm3D" type="SpringArm3D" parent="AssemblyManager" unique_id=1083502628]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+spring_length = 20.0
+margin = 0.1
+
+[node name="OrbitCam" type="Camera3D" parent="AssemblyManager/SpringArm3D" unique_id=1055615988]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+current = true
+
+[node name="RocketController" type="Node3D" parent="AssemblyManager" unique_id=390936715]
+script = ExtResource("2_7s7gv")
+
+[node name="BuildManager" parent="AssemblyManager" unique_id=1539090673 instance=ExtResource("6_7s7gv")]
+parts_palette = Array[PackedScene]([ExtResource("3_v6vo6"), ExtResource("2_xvabq"), ExtResource("1_3ld7y")])
+
+[node name="Ground" type="StaticBody3D" parent="." unique_id=1095330954]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground" unique_id=1540533304]
+shape = SubResource("BoxShape3D_7s7gv")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground" unique_id=345634578]
+mesh = SubResource("PlaneMesh_l6gie")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1167938789]
+transform = Transform3D(-1, -8.742278e-08, 0, -3.821371e-15, 4.371139e-08, 1, -8.742278e-08, 1, -4.371139e-08, 0, 16, 0)
