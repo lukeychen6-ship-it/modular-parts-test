@@ -162,3 +162,6 @@ func place_part() -> void:
 	ghost_part.queue_free()
 	ghost_part = null
 	print("✅ Part placed!")
+	assembly_manager.controller.parts.append(new_part)
+	if new_part.has_method("get_attachment_points"):  # optional
+		print("Added new part to controller")

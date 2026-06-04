@@ -30,25 +30,24 @@ func find_connected_part_at_port(bottom_port: Marker3D) -> RigidBody3D:
 func create_joint_between(part_a: RigidBody3D, part_b: RigidBody3D, bottom_port: Marker3D) -> void:
 	var joint = Generic6DOFJoint3D.new()
 	joint.name = "Joint_" + part_a.name + "_" + part_b.name
-	add_child(joint)
 	
-	# Connect the two rigid bodies
+	# Add to part_a so it exists in 3D space
+	part_a.add_child(joint)
+	
 	joint.node_a = part_a.get_path()
 	joint.node_b = part_b.get_path()
 	
-	# Make the joint very stiff (like welded)
-	for i in range(6):  # 0-2 = linear, 3-5 = angular
-		joint.set("linear_limit_" + ["x","y","z"][i % 3] + "/enabled", true)
-		joint.set("linear_limit_" + ["x","y","z"][i % 3] + "/upper", 0.0)
-		joint.set("linear_limit_" + ["x","y","z"][i % 3] + "/lower", 0.0)
+	for i in range(3):
+		joint.set("linear_limit_" + ["x","y","z"][i] + "/enabled", true)
+		joint.set("linear_limit_" + ["x","y","z"][i] + "/upper", 0.0)
+		joint.set("linear_limit_" + ["x","y","z"][i] + "/lower", 0.0)
 		
-		joint.set("angular_limit_" + ["x","y","z"][i % 3] + "/enabled", true)
-		joint.set("angular_limit_" + ["x","y","z"][i % 3] + "/upper", 0.0)
-		joint.set("angular_limit_" + ["x","y","z"][i % 3] + "/lower", 0.0)
+		joint.set("angular_limit_" + ["x","y","z"][i] + "/enabled", true)
+		joint.set("angular_limit_" + ["x","y","z"][i] + "/upper", 0.0)
+		joint.set("angular_limit_" + ["x","y","z"][i] + "/lower", 0.0)
 	
-	# Position the joint at the connection point
 	joint.global_transform = bottom_port.global_transform
-
+	
 func _ready() -> void:
 	set_physics_process(true)
 
@@ -74,11 +73,13 @@ func launch_rocket() -> void:
 	
 	for part in parts:
 		if part is RigidBody3D:
+			part.collision_layer = 1  # restore to default layer
+			part.collision_mask = 1   # restore to default mask
 			part.set_deferred("freeze", false)
 			part.set_deferred("sleeping", false)
 	
 	await get_tree().physics_frame
-	await get_tree().physics_frame  # Give physics two frames to wake up
+	await get_tree().physics_frame
 	
 	create_rigid_joints()
 	print("Joints created - rocket should now be connected!")
