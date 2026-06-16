@@ -153,6 +153,11 @@ func place_part() -> void:
 	# Register with RocketController
 	if assembly_manager.controller:
 		assembly_manager.controller.parts.append(new_part)
+		for child in new_part.get_children():
+			if child.has_method("apply_thrust"):
+				assembly_manager.controller.engines.append(new_part)
+				print("Engine registered: ", new_part.name)
+				break
 
 	if snapped_to_port:
 		occupied_ports.append(snapped_to_port)

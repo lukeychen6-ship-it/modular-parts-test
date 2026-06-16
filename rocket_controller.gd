@@ -68,6 +68,8 @@ func _physics_process(_delta: float) -> void:
 				break
 
 func launch_rocket() -> void:
+	print("Parts count: ", parts.size())
+	print("Engines count: ", engines.size())
 	is_launched = true
 	print("=== ROCKET LAUNCHED - Creating joints ===")
 	
