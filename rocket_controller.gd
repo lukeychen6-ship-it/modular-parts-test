@@ -47,7 +47,11 @@ func create_joint_between(part_a: RigidBody3D, part_b: RigidBody3D, bottom_port:
 		joint.set("angular_limit_" + ["x","y","z"][i] + "/lower", 0.0)
 	
 	joint.global_transform = bottom_port.global_transform
-	
+
+func create_launch_stats() -> void:
+	# used to create menu for stats (ie altitude, weight, etc)
+	print("placeholder")
+
 func _ready() -> void:
 	set_physics_process(true)
 

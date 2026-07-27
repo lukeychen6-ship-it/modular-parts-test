@@ -10,12 +10,17 @@ var snapped_to_port: Marker3D = null
 var occupied_ports: Array[Marker3D] = []
 var snap_threshold := 4.0
 var unsnap_threshold := 6.0
+var engine_count := 0
 
 @onready var camera := get_viewport().get_camera_3d()
 @onready var assembly_manager = get_tree().get_root().find_child("AssemblyManager", true, false)
+@export var fuel_tank_button: Button
+@export var nose_cone_button: Button
+@export var engine_button: Button
 
 func _ready() -> void:
 	print("✅ BuildManager ready. Camera:", camera != null)
+
 
 func _input(event: InputEvent) -> void:
 	# Select parts with 1, 2, 3
@@ -30,8 +35,16 @@ func _input(event: InputEvent) -> void:
 		create_ghost()
 
 	if event.is_action_pressed("select_3") and parts_palette.size() > 2:
-		selected_part_type = parts_palette[2]
-		print("✅ SELECTED: Engine")
+		if engine_count < 1:
+			selected_part_type = parts_palette[2]
+			print("✅ SELECTED: Engine")
+			create_ghost()
+		else:
+			print("You can only have one engine")
+
+	if event.is_action_pressed("clear_part"):
+		selected_part_type = null
+		print ("Part cleared")
 		create_ghost()
 
 	# Left-click to place the current ghost
@@ -168,5 +181,7 @@ func place_part() -> void:
 	ghost_part = null
 	print("✅ Part placed!")
 	assembly_manager.controller.parts.append(new_part)
+	if selected_part_type == parts_palette[2]:
+		engine_count += 1
 	if new_part.has_method("get_attachment_points"):  # optional
 		print("Added new part to controller")

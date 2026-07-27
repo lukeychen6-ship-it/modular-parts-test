@@ -14,7 +14,7 @@ func apply_thrust() -> void:
 	var force_vector = global_transform.basis.y * thrust_force
 	var nozzle_offset = global_transform.basis.y * -0.5   # tweak as needed
 	
-	body.apply_force(force_vector, body.global_position + nozzle_offset)
+	body.apply_central_force(force_vector)
 	# or body.apply_central_force(force_vector) for simpler testing
 	if Engine.get_frames_drawn() % 60 == 0:
 		print("Thrust applied: ", thrust_force)
