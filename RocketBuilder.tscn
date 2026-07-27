@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://byh0vvkflj2ya" path="res://FuelTank.tscn" id="3_v6vo6"]
 [ext_resource type="PackedScene" uid="uid://cxgaovv3f62o5" path="res://BuildManager.tscn" id="6_7s7gv"]
 [ext_resource type="Script" uid="uid://c7avyorp2xfkn" path="res://parts_menu.gd" id="7_l6gie"]
+[ext_resource type="Script" uid="uid://bnbxbjwabfr3b" path="res://altitude_info.gd" id="8_28f8q"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_7s7gv"]
 size = Vector3(50, 1, 50)
@@ -73,3 +74,11 @@ offset_right = 970.224
 offset_bottom = 590.36
 alignment = 1
 script = ExtResource("7_l6gie")
+
+[node name="AltitudeInfo" type="BoxContainer" parent="." unique_id=1605232439]
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 0.17300001
+offset_right = 4.0
+offset_bottom = -0.104003906
+script = ExtResource("8_28f8q")
