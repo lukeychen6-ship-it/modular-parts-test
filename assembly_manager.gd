@@ -22,13 +22,6 @@ func _ready() -> void:
 				break
 	for part in controller.parts:
 		part.add_to_group("rocket_parts")
-func _process(delta: float) -> void:
-	for engine_body in engines:                    # renamed for clarity
-		# Find the EngineComponent child and set throttle on it
-		for child in engine_body.get_children():
-			if child.has_method("apply_thrust"):
-				var elevation: float = child.global_position.y
-				print("Engine elevation: ", elevation)
 				
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("launch"):

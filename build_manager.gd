@@ -11,12 +11,10 @@ var occupied_ports: Array[Marker3D] = []
 var snap_threshold := 4.0
 var unsnap_threshold := 6.0
 var engine_count := 0
+var fuel_tank_count := 0
 
 @onready var camera := get_viewport().get_camera_3d()
 @onready var assembly_manager = get_tree().get_root().find_child("AssemblyManager", true, false)
-@export var fuel_tank_button: Button
-@export var nose_cone_button: Button
-@export var engine_button: Button
 
 func _ready() -> void:
 	print("✅ BuildManager ready. Camera:", camera != null)
@@ -129,7 +127,9 @@ func _process(_delta: float) -> void:
 	# Search for closest available (unoccupied) top port
 	var best_snap_distance := 9999.0
 	var best_target_port: Marker3D = null
-
+	
+	print("Searching ports. Occupied: ", occupied_ports.size())
+	
 	for part in get_tree().get_nodes_in_group("rocket_parts"):
 		if part == ghost_part or not part.has_method("get_attachment_points"):
 			continue
@@ -139,6 +139,8 @@ func _process(_delta: float) -> void:
 				if distance < best_snap_distance:
 					best_snap_distance = distance
 					best_target_port = port
+					
+	print("Best snap distance: ", best_snap_distance, " | Target port: ", best_target_port)
 
 	if best_target_port and best_snap_distance < snap_threshold:
 		is_snapped = true
@@ -159,9 +161,14 @@ func place_part() -> void:
 	new_part.collision_mask = 0
 	new_part.add_to_group("rocket_parts")
 
-	# Add to AssemblyManager so RocketController can find it
+	# Set transform BEFORE add_child so _ready() sees the correct position
+	# We can't use global_transform before it's in the tree, so store it
+	var target_transform = ghost_part.global_transform
+
 	assembly_manager.add_child(new_part)
-	new_part.global_transform = ghost_part.global_transform
+	
+	# Use call_deferred so the transform is applied after _ready() finishes
+	new_part.set_deferred("global_transform", target_transform)
 
 	# Register with RocketController
 	if assembly_manager.controller:
@@ -179,9 +186,9 @@ func place_part() -> void:
 	snapped_to_port = null
 	ghost_part.queue_free()
 	ghost_part = null
-	print("✅ Part placed!")
-	assembly_manager.controller.parts.append(new_part)
+
 	if selected_part_type == parts_palette[2]:
 		engine_count += 1
-	if new_part.has_method("get_attachment_points"):  # optional
-		print("Added new part to controller")
+	if selected_part_type == parts_palette[0]:
+		fuel_tank_count += 1
+	print("✅ Part placed!")

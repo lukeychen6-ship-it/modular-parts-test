@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://cxgaovv3f62o5" path="res://BuildManager.tscn" id="6_7s7gv"]
 [ext_resource type="Script" uid="uid://c7avyorp2xfkn" path="res://parts_menu.gd" id="7_l6gie"]
 [ext_resource type="Script" uid="uid://bnbxbjwabfr3b" path="res://altitude_info.gd" id="8_28f8q"]
+[ext_resource type="Script" uid="uid://bmnakol3pyg17" path="res://fuel_info.gd" id="8_s3624"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_7s7gv"]
 size = Vector3(50, 1, 50)
@@ -68,17 +69,23 @@ text = "Parts:"
 anchors_preset = -1
 anchor_right = 0.163
 anchor_bottom = 0.116000004
-offset_left = 6.0
+offset_left = 2.0
 offset_top = 564.0
-offset_right = 970.224
-offset_bottom = 590.36
+offset_right = 964.224
+offset_bottom = 573.83203
 alignment = 1
 script = ExtResource("7_l6gie")
+
+[node name="FuelInfo" type="BoxContainer" parent="." unique_id=102227866]
+offset_left = -2.0
+offset_top = 124.0
+offset_right = 156.0
+offset_bottom = 236.0
+script = ExtResource("8_s3624")
 
 [node name="AltitudeInfo" type="BoxContainer" parent="." unique_id=1605232439]
 anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 0.17300001
-offset_right = 4.0
 offset_bottom = -0.104003906
 script = ExtResource("8_28f8q")

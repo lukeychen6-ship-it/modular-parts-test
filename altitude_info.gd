@@ -1,19 +1,28 @@
 extends BoxContainer
-@export var engines: Array[RigidBody3D]
 
-var elevation_label = Label.new()
+var elevation_label: Label
+var position_label: Label
 
-# Called when the node enters the scene tree for the first time.
+@onready var assembly_manager = get_tree().get_root().find_child("AssemblyManager", true, false)
+
 func _ready() -> void:
-	pass # Replace with function body.
+	elevation_label = Label.new()
+	position_label = Label.new()
+	elevation_label.text = "Altitude: 0m, "
+	position_label.text = "Rocket position: (0,0)"
+	add_child(elevation_label)
+	add_child(position_label)
 
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	for engine_body in engines:           
-		for child in engine_body.get_children():
-			if child.has_method("apply_thrust"):
-				var elevation: float = child.global_position.y
-				elevation_label.text = elevation
-				
+func _process(_delta: float) -> void:
+	if not assembly_manager or not assembly_manager.controller:
+		return
+	
+	var engines = assembly_manager.controller.engines
+	if engines.is_empty():
+		return
+	
+	var elevation: float = engines[0].global_position.y
+	var x_position: float = engines[0].global_position.x
+	var z_position: float = engines[0].global_position.z
+	elevation_label.text = "Altitude: " + str(snappedf(elevation, 0.1)) + "m, "
+	position_label.text = "Rocket position: (" + str(snappedf(x_position, 0.1)) + "," + str(snappedf(z_position, 0.1)) + ")"

@@ -1,7 +1,7 @@
 extends Node3D
 class_name EngineComponent
 
-@export var max_thrust: float = 4000.0
+@export var max_thrust: float = 2500.0
 @export var throttle: float = 0.0
 
 @onready var body: RigidBody3D = get_parent()  # The actual RigidBody part
