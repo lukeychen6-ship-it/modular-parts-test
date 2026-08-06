@@ -7,9 +7,9 @@ func _ready() -> void:
 	var nose_cone_button = Button.new()
 	var engine_button = Button.new()
 	
-	fuel_tank_button.text = "Fuel Tank"
-	nose_cone_button.text = "Nose Cone"
-	engine_button.text = "Engine"
+	fuel_tank_button.text = "Fuel Tank (1)"
+	nose_cone_button.text = "Nose Cone (2)"
+	engine_button.text = "Engine (3)"
 	
 	fuel_tank_button.pressed.connect(_on_fuel_tank_pressed)
 	nose_cone_button.pressed.connect(_on_nose_cone_pressed)

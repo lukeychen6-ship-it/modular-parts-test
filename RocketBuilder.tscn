@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://cxgaovv3f62o5" path="res://BuildManager.tscn" id="6_7s7gv"]
 [ext_resource type="Script" uid="uid://c7avyorp2xfkn" path="res://parts_menu.gd" id="7_l6gie"]
 [ext_resource type="Script" uid="uid://bnbxbjwabfr3b" path="res://altitude_info.gd" id="8_28f8q"]
+[ext_resource type="Script" uid="uid://cvm54wcvqby0h" path="res://max_altitude.gd" id="8_bkwor"]
 [ext_resource type="Script" uid="uid://bmnakol3pyg17" path="res://fuel_info.gd" id="8_s3624"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_7s7gv"]
@@ -15,6 +16,15 @@ size = Vector3(50, 1, 50)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_l6gie"]
 size = Vector2(50, 50)
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_s3624"]
+
+[sub_resource type="Sky" id="Sky_bkwor"]
+sky_material = SubResource("ProceduralSkyMaterial_s3624")
+
+[sub_resource type="Environment" id="Environment_god1e"]
+background_mode = 2
+sky = SubResource("Sky_bkwor")
 
 [node name="World" type="Node3D" unique_id=1850233647]
 
@@ -76,6 +86,13 @@ offset_bottom = 573.83203
 alignment = 1
 script = ExtResource("7_l6gie")
 
+[node name="MaxAltitude" type="BoxContainer" parent="." unique_id=9958647]
+offset_left = 1.0
+offset_top = 220.0
+offset_right = 226.0
+offset_bottom = 306.0
+script = ExtResource("8_bkwor")
+
 [node name="FuelInfo" type="BoxContainer" parent="." unique_id=102227866]
 offset_left = -2.0
 offset_top = 124.0
@@ -89,3 +106,6 @@ anchor_right = 1.0
 anchor_bottom = 0.17300001
 offset_bottom = -0.104003906
 script = ExtResource("8_28f8q")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=513293081]
+environment = SubResource("Environment_god1e")

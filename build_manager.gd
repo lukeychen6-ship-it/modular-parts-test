@@ -140,7 +140,7 @@ func _process(_delta: float) -> void:
 					best_snap_distance = distance
 					best_target_port = port
 					
-	print("Best snap distance: ", best_snap_distance, " | Target port: ", best_target_port)
+
 
 	if best_target_port and best_snap_distance < snap_threshold:
 		is_snapped = true
@@ -157,13 +157,20 @@ func place_part() -> void:
 
 	var new_part = selected_part_type.instantiate()
 	new_part.freeze = true
-	new_part.collision_layer = 0
-	new_part.collision_mask = 0
+	
+	# FIX: Remove or change these lines so the raycast can hit placed parts!
+	new_part.collision_layer = 1  # Was previously 0
+	new_part.collision_mask = 1   # Was previously 0
+	
 	new_part.add_to_group("rocket_parts")
 
 	# Set transform BEFORE add_child so _ready() sees the correct position
-	# We can't use global_transform before it's in the tree, so store it
 	var target_transform = ghost_part.global_transform
+
+	assembly_manager.add_child(new_part)
+	
+	# Use call_deferred so the transform is applied after _ready() finishes
+	new_part.set_deferred("global_transform", target_transform)
 
 	assembly_manager.add_child(new_part)
 	

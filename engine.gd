@@ -2,19 +2,28 @@ extends Node3D
 class_name EngineComponent
 
 @export var max_thrust: float = 2500.0
+@export var max_gimbal: float = 100.0  # how strongly it steers
 @export var throttle: float = 0.0
 
-@onready var body: RigidBody3D = get_parent()  # The actual RigidBody part
+var steer_direction: Vector2 = Vector2.ZERO  # x = left/right, y = forward/back
+
+@onready var body: RigidBody3D = get_parent()
 
 func apply_thrust() -> void:
 	if throttle <= 0.0:
 		return
-	
+
 	var thrust_force = max_thrust * throttle
 	var force_vector = global_transform.basis.y * thrust_force
-	var nozzle_offset = global_transform.basis.y * -0.5   # tweak as needed
-	
 	body.apply_central_force(force_vector)
-	# or body.apply_central_force(force_vector) for simpler testing
+
+	# Apply steering as a lateral force offset from center
+	if steer_direction.length() > 0.0:
+		var gimbal_force = (global_transform.basis.x * steer_direction.x +
+							global_transform.basis.z * steer_direction.y) * max_gimbal
+		# Apply at the bottom of the rocket to create rotation
+		var nozzle_pos = global_transform.basis.y * -1.0
+		body.apply_force(gimbal_force, nozzle_pos)
+
 	if Engine.get_frames_drawn() % 60 == 0:
 		print("Thrust applied: ", thrust_force)

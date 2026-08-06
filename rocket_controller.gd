@@ -3,6 +3,8 @@ class_name RocketController
 
 @export var parts: Array[RigidBody3D] = []
 @export var engines: Array[RigidBody3D] = []
+@onready var spring_arm: SpringArm3D = get_parent().get_node("SpringArm3D")
+@onready var fuel_info = get_tree().get_root().find_child("FuelInfo", true, false)
 
 var is_launched: bool = false
 
@@ -58,17 +60,36 @@ func _ready() -> void:
 func _physics_process(_delta: float) -> void:
 	if not is_launched:
 		return
-	
+
+	# Follow rocket with camera
+	if not parts.is_empty():
+		var rocket_center = Vector3.ZERO
+		for part in parts:
+			rocket_center += part.global_position
+		rocket_center /= parts.size()
+		spring_arm.global_position = rocket_center + Vector3(0, 2.5, 0)
+
 	var main_throttle = 0.0
 	if Input.is_action_pressed("thrust"):
 		main_throttle = 1.0
-	
-	for engine_body in engines:                    # renamed for clarity
-		# Find the EngineComponent child and set throttle on it
+
+	# Read steering input
+	var steer = Vector2.ZERO
+	if Input.is_action_pressed("steer_right"):
+		steer.x = -1.0
+	if Input.is_action_pressed("steer_left"):
+		steer.x = 1.0
+	if Input.is_action_pressed("steer_back"):
+		steer.y = -1.0
+	if Input.is_action_pressed("steer_forward"):
+		steer.y = 1.0
+
+	for engine_body in engines:
 		for child in engine_body.get_children():
 			if child.has_method("apply_thrust"):
-				child.throttle = main_throttle     # ← Set on the component
-				child.apply_thrust()               # ← Call apply_thrust
+				child.throttle = main_throttle
+				child.steer_direction = steer
+				child.apply_thrust()
 				break
 
 func launch_rocket() -> void:
