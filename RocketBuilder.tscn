@@ -10,12 +10,13 @@
 [ext_resource type="Script" uid="uid://bnbxbjwabfr3b" path="res://altitude_info.gd" id="8_28f8q"]
 [ext_resource type="Script" uid="uid://cvm54wcvqby0h" path="res://max_altitude.gd" id="8_bkwor"]
 [ext_resource type="Script" uid="uid://bmnakol3pyg17" path="res://fuel_info.gd" id="8_s3624"]
+[ext_resource type="Script" uid="uid://jtaxjoebs1em" path="res://rank.gd" id="9_god1e"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_7s7gv"]
-size = Vector3(50, 1, 50)
+size = Vector3(10000, 1, 10000)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_l6gie"]
-size = Vector2(50, 50)
+size = Vector2(10000, 10000)
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_s3624"]
 
@@ -58,6 +59,7 @@ mesh = SubResource("PlaneMesh_l6gie")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1167938789]
 transform = Transform3D(-1, -8.742278e-08, 0, -3.821371e-15, 4.371139e-08, 1, -8.742278e-08, 1, -4.371139e-08, 0, 16, 0)
+shadow_enabled = true
 
 [node name="BoxContainer" type="BoxContainer" parent="." unique_id=1884986113]
 anchors_preset = -1
@@ -92,6 +94,13 @@ offset_top = 220.0
 offset_right = 226.0
 offset_bottom = 306.0
 script = ExtResource("8_bkwor")
+
+[node name="Rank" type="BoxContainer" parent="." unique_id=100830219]
+offset_left = 2.0
+offset_top = 304.0
+offset_right = 240.0
+offset_bottom = 400.0
+script = ExtResource("9_god1e")
 
 [node name="FuelInfo" type="BoxContainer" parent="." unique_id=102227866]
 offset_left = -2.0

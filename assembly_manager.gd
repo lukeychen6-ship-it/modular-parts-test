@@ -23,7 +23,7 @@ func _ready() -> void:
 	for part in controller.parts:
 		part.add_to_group("rocket_parts")
 	var restart_button = Button.new()
-	restart_button.text = "Restart"
+	restart_button.text = "Restart (Escape)"
 	restart_button.pressed.connect(_on_restart_pressed)
 	
 	# Add to the UI — find your existing BoxContainer

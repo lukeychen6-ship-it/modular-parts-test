@@ -2,8 +2,8 @@ extends BoxContainer
 
 var fuel_label: Label
 var current_fuel: float = 0.0
+var fuel_consumption_rate: float = 0.0
 var fuel_initialized: bool = false
-var fuel_consumption_rate: float = 10.0  # kg per second
 
 @onready var build_manager = get_tree().get_root().find_child("BuildManager", true, false)
 @onready var rocket_controller = get_tree().get_root().find_child("RocketController", true, false)
@@ -17,14 +17,24 @@ func _process(delta: float) -> void:
 	if not build_manager or not rocket_controller:
 		return
 
-	# Set starting fuel once when launched
+	# Set starting fuel and consumption rate once when launched
 	if rocket_controller.is_launched and not fuel_initialized:
 		current_fuel = build_manager.fuel_tank_count * 100.0
+
+		# Sum the mass of all engine bodies
+		var total_mass: float = 0.0
+		for part in rocket_controller.parts:
+			total_mass += part.mass
+		
+		# Heavier engines consume more fuel per second
+		fuel_consumption_rate = total_mass * 0.25
+		print("Fuel consumption rate: ", fuel_consumption_rate, "kg/s")
 		fuel_initialized = true
 
 	# Consume fuel while thrusting
-	if rocket_controller.is_launched and Input.is_action_pressed("thrust"):
-		current_fuel = max(0.0, current_fuel - fuel_consumption_rate * delta)
+	if rocket_controller.is_launched:
+		if Input.is_action_pressed("thrust"):
+			current_fuel = max(0.0, current_fuel - fuel_consumption_rate * delta)
 
 	# Before launch, show full fuel amount
 	if not rocket_controller.is_launched:

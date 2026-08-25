@@ -1,19 +1,26 @@
 extends BoxContainer
 
 var max_altitude_label: Label
+@export var max_altitude: float = 0.0
+@export var all_time_max_altitude: float = 0.0
 
-@onready var altitude_info = get_tree().get_root().find_child("AltitudeInfo", true, false)
+const SAVE_PATH = "user://save_data.cfg"
+var config = ConfigFile.new()
+
 @onready var assembly_manager = get_tree().get_root().find_child("AssemblyManager", true, false)
 
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	max_altitude_label = Label.new()
 	max_altitude_label.text = "Highest Altitude: 0m"
 	add_child(max_altitude_label)
+	load_max_altitude()
+	
+	var reset_button = Button.new()
+	reset_button.text = "Reset Max Altitude"
+	reset_button.pressed.connect(reset_record)
+	add_child(reset_button)
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	var max_altitude: float = 0
+func _process(_delta: float) -> void:
 	if not assembly_manager or not assembly_manager.controller:
 		return
 	
@@ -24,4 +31,27 @@ func _process(delta: float) -> void:
 	var elevation: float = engines[0].global_position.y
 	if elevation > max_altitude:
 		max_altitude = elevation
-	max_altitude_label.text = "Highest Altitude: " + str(snappedf(max_altitude, 0.1)) + "m"
+	
+	# Check if current run beat the all time record
+	if max_altitude > all_time_max_altitude:
+		all_time_max_altitude = max_altitude
+		save_max_altitude()
+	
+	max_altitude_label.text = "Highest Altitude: " + str(snappedf(max_altitude, 0.1)) + "m\nRecord: " + str(snappedf(all_time_max_altitude, 0.1)) + "m"
+
+func save_max_altitude() -> void:
+	config.set_value("stats", "max_altitude", all_time_max_altitude)
+	config.save(SAVE_PATH)
+	print("Saved record altitude: ", all_time_max_altitude)
+
+func load_max_altitude() -> void:
+	var err = config.load(SAVE_PATH)
+	if err == OK:
+		all_time_max_altitude = config.get_value("stats", "max_altitude", 0.0)
+		print("Loaded record altitude: ", all_time_max_altitude)
+	else:
+		print("No save file found, starting fresh")
+
+func reset_record() -> void:
+	all_time_max_altitude = 0.0
+	save_max_altitude()

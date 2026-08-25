@@ -128,8 +128,6 @@ func _process(_delta: float) -> void:
 	var best_snap_distance := 9999.0
 	var best_target_port: Marker3D = null
 	
-	print("Searching ports. Occupied: ", occupied_ports.size())
-	
 	for part in get_tree().get_nodes_in_group("rocket_parts"):
 		if part == ghost_part or not part.has_method("get_attachment_points"):
 			continue
@@ -140,7 +138,6 @@ func _process(_delta: float) -> void:
 					best_snap_distance = distance
 					best_target_port = port
 					
-
 
 	if best_target_port and best_snap_distance < snap_threshold:
 		is_snapped = true
@@ -157,27 +154,17 @@ func place_part() -> void:
 
 	var new_part = selected_part_type.instantiate()
 	new_part.freeze = true
-	
-	# FIX: Remove or change these lines so the raycast can hit placed parts!
-	new_part.collision_layer = 1  # Was previously 0
-	new_part.collision_mask = 1   # Was previously 0
-	
+	new_part.collision_layer = 1
+	new_part.collision_mask = 1
 	new_part.add_to_group("rocket_parts")
 
-	# Set transform BEFORE add_child so _ready() sees the correct position
 	var target_transform = ghost_part.global_transform
 
 	assembly_manager.add_child(new_part)
-	
-	# Use call_deferred so the transform is applied after _ready() finishes
 	new_part.set_deferred("global_transform", target_transform)
 
-	assembly_manager.add_child(new_part)
-	
-	# Use call_deferred so the transform is applied after _ready() finishes
-	new_part.set_deferred("global_transform", target_transform)
+	# Remove the duplicate add_child and set_deferred that were here
 
-	# Register with RocketController
 	if assembly_manager.controller:
 		assembly_manager.controller.parts.append(new_part)
 		for child in new_part.get_children():

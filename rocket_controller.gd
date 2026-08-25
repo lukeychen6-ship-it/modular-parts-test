@@ -63,20 +63,20 @@ func _physics_process(_delta: float) -> void:
 
 	# Follow rocket with camera
 	if not parts.is_empty():
-		var rocket_center = Vector3.ZERO
-		for part in parts:
-			rocket_center += part.global_position
-		rocket_center /= parts.size()
-		spring_arm.global_position = rocket_center + Vector3(0, 2.5, 0)
+		var engine_center = Vector3.ZERO
+		for engine in engines:
+			engine_center = engine.global_position
+		spring_arm.global_position = engine_center + Vector3(0, 2.5, 0)
 
-	var main_throttle = 0.0
-	if Input.is_action_pressed("thrust"):
+	var main_throttle = 0
+
+	if Input.is_action_pressed("thrust") and fuel_info.current_fuel > 0:
 		main_throttle = 1.0
 
 	# Read steering input
 	var steer = Vector2.ZERO
 	if Input.is_action_pressed("steer_right"):
-		steer.x = -1.0
+		steer.x = -1.0 
 	if Input.is_action_pressed("steer_left"):
 		steer.x = 1.0
 	if Input.is_action_pressed("steer_back"):
@@ -92,10 +92,13 @@ func _physics_process(_delta: float) -> void:
 				child.apply_thrust()
 				break
 
+var has_launched := false  # separate from is_launched to track post-launch state
+
 func launch_rocket() -> void:
+	is_launched = true
+	has_launched = true
 	print("Parts count: ", parts.size())
 	print("Engines count: ", engines.size())
-	is_launched = true
 	print("=== ROCKET LAUNCHED - Creating joints ===")
 	
 	for part in parts:
@@ -110,6 +113,45 @@ func launch_rocket() -> void:
 	
 	create_rigid_joints()
 	print("Joints created - rocket should now be connected!")
+	await get_tree().physics_frame
+	for part in parts:
+		if not part.body_entered.is_connected(_on_part_hit_ground):
+			part.contact_monitor = true
+			part.max_contacts_reported = 4
+			part.body_entered.connect(_on_part_hit_ground.bind(part))
+
+func _on_part_hit_ground(body: Node, hitting_part: RigidBody3D) -> void:
+	# Only break apart if we've actually launched and are coming back down
+	if not has_launched or not is_launched:
+		return
+	
+	# Check it's the ground we hit, not another rocket part
+	if body.is_in_group("rocket_parts"):
+		return
+	
+	# Only trigger if moving downward fast enough (ignore gentle landings)
+	if hitting_part.linear_velocity.y > -5.0:
+		return
+	
+	break_apart()
+func break_apart() -> void:
+	if not is_launched:
+		return
+	
+	is_launched = false
+	print("💥 Rocket broke apart!")
+	
+	# Remove all joints
+	for part in parts:
+		for child in part.get_children():
+			if child is Joint3D:
+				child.queue_free()
+	
+	# Unfreeze all parts so they fly apart
+	for part in parts:
+		part.collision_layer = 1
+		part.collision_mask = 1
+		part.set_deferred("freeze", false)
 
 # New function: Connect parts via ports
 func create_rigid_joints() -> void:
