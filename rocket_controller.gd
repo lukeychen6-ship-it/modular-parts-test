@@ -28,6 +28,30 @@ func find_connected_part_at_port(bottom_port: Marker3D) -> RigidBody3D:
 	
 	return best_part
 
+func find_connected_part_at_side_port(side_port: Marker3D) -> RigidBody3D:
+	var best_part: RigidBody3D = null
+	var best_dist := 9999.0
+	
+	for other in parts:
+		if other == side_port.get_parent():
+			continue
+		if not other.has_method("get_side_attachment_points"):
+			continue
+		
+		for other_port in other.get_side_attachment_points():
+			if not other_port:
+				continue
+			# Only connect opposite sides: left↔right
+			var is_opposite = ("left" in side_port.name.to_lower() and "right" in other_port.name.to_lower()) or \
+							  ("right" in side_port.name.to_lower() and "left" in other_port.name.to_lower())
+			if not is_opposite:
+				continue
+			var dist = side_port.global_position.distance_to(other_port.global_position)
+			if dist < best_dist and dist < 0.5:
+				best_dist = dist
+				best_part = other
+	
+	return best_part
 # Create a strong rigid joint between two parts
 func create_joint_between(part_a: RigidBody3D, part_b: RigidBody3D, bottom_port: Marker3D) -> void:
 	var joint = Generic6DOFJoint3D.new()
@@ -84,13 +108,16 @@ func _physics_process(_delta: float) -> void:
 	if Input.is_action_pressed("steer_forward"):
 		steer.y = 1.0
 
+	var engine_count = engines.size()
+
 	for engine_body in engines:
 		for child in engine_body.get_children():
 			if child.has_method("apply_thrust"):
 				child.throttle = main_throttle
 				child.steer_direction = steer
+				child.engine_count = engine_count  # pass count directly
 				child.apply_thrust()
-				break
+				
 
 var has_launched := false  # separate from is_launched to track post-launch state
 
@@ -155,18 +182,37 @@ func break_apart() -> void:
 
 # New function: Connect parts via ports
 func create_rigid_joints() -> void:
-	var connected_pairs = {}  # To avoid duplicate joints
+	var connected_pairs = {}
 	
 	for part in parts:
 		if not part.has_method("get_attachment_points"):
 			continue
-			
+		
+		# --- Top/bottom joints (existing logic) ---
 		for port in part.get_attachment_points():
 			if not port:
 				continue
-				
-			# Only connect BOTTOM ports to TOP ports of the part below
 			if "bottom" in port.name.to_lower():
 				var connected_part = find_connected_part_at_port(port)
 				if connected_part and connected_part != part:
 					create_joint_between(part, connected_part, port)
+		
+		# --- Side joints (new logic) ---
+		if not part.has_method("get_side_attachment_points"):
+			continue
+		
+		for side_port in part.get_side_attachment_points():
+			if not side_port:
+				continue
+			
+			# Only process left ports to avoid creating duplicate joints
+			if not "left" in side_port.name.to_lower():
+				continue
+			
+			var connected_part = find_connected_part_at_side_port(side_port)
+			if connected_part and connected_part != part:
+				var pair_key = str(min(part.get_instance_id(), connected_part.get_instance_id())) + \
+							   "_" + str(max(part.get_instance_id(), connected_part.get_instance_id()))
+				if pair_key not in connected_pairs:
+					connected_pairs[pair_key] = true
+					create_joint_between(part, connected_part, side_port)

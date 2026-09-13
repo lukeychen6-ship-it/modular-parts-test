@@ -10,7 +10,9 @@
 [ext_resource type="Script" uid="uid://bnbxbjwabfr3b" path="res://altitude_info.gd" id="8_28f8q"]
 [ext_resource type="Script" uid="uid://cvm54wcvqby0h" path="res://max_altitude.gd" id="8_bkwor"]
 [ext_resource type="Script" uid="uid://bmnakol3pyg17" path="res://fuel_info.gd" id="8_s3624"]
-[ext_resource type="Script" uid="uid://jtaxjoebs1em" path="res://rank.gd" id="9_god1e"]
+[ext_resource type="PackedScene" uid="uid://i5bjcpghqa7k" path="res://canvas_layer.tscn" id="12_7fi8l"]
+[ext_resource type="PackedScene" uid="uid://4mrhkafb7k4u" path="res://save_load_manager.tscn" id="13_ieqm0"]
+[ext_resource type="PackedScene" uid="uid://5y7g3puybvw0" path="res://inspiration_menu.tscn" id="14_dqr54"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_7s7gv"]
 size = Vector3(10000, 1, 10000)
@@ -35,6 +37,7 @@ script = ExtResource("1_v6vo6")
 
 [node name="SpringArm3D" type="SpringArm3D" parent="AssemblyManager" unique_id=1083502628]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+collision_mask = 2
 spring_length = 20.0
 margin = 0.1
 
@@ -50,11 +53,13 @@ parts_palette = Array[PackedScene]([ExtResource("3_v6vo6"), ExtResource("2_xvabq
 
 [node name="Ground" type="StaticBody3D" parent="." unique_id=1095330954]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5, 0)
+collision_layer = 3
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Ground" unique_id=1540533304]
 shape = SubResource("BoxShape3D_7s7gv")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Ground" unique_id=345634578]
+layers = 3
 mesh = SubResource("PlaneMesh_l6gie")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1167938789]
@@ -74,8 +79,9 @@ offset_bottom = 187.84
 alignment = 1
 
 [node name="Label" type="Label" parent="BoxContainer" unique_id=1248496312]
+modulate = Color(0, 0, 0, 1)
 layout_mode = 2
-text = "Parts:"
+text = "Items:"
 
 [node name="PartsMenu" type="BoxContainer" parent="." unique_id=2041891968]
 anchors_preset = -1
@@ -95,13 +101,6 @@ offset_right = 226.0
 offset_bottom = 306.0
 script = ExtResource("8_bkwor")
 
-[node name="Rank" type="BoxContainer" parent="." unique_id=100830219]
-offset_left = 2.0
-offset_top = 304.0
-offset_right = 240.0
-offset_bottom = 400.0
-script = ExtResource("9_god1e")
-
 [node name="FuelInfo" type="BoxContainer" parent="." unique_id=102227866]
 offset_left = -2.0
 offset_top = 124.0
@@ -118,3 +117,9 @@ script = ExtResource("8_28f8q")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=513293081]
 environment = SubResource("Environment_god1e")
+
+[node name="AchievementManager" parent="." unique_id=970274474 instance=ExtResource("12_7fi8l")]
+
+[node name="SaveLoadManager" parent="." unique_id=605963398 instance=ExtResource("13_ieqm0")]
+
+[node name="InspirationMenu" parent="." unique_id=1393272076 instance=ExtResource("14_dqr54")]

@@ -21,18 +21,22 @@ func _process(_delta) -> void:
 		max_gimbal = total_mass * 3
 
 
+var engine_count: int = 1  # set by rocket_controller each frame
+
 func apply_thrust() -> void:
 	if throttle <= 0.0:
 		return
-
-	var thrust_force = max_thrust * throttle
+	
+	var effective_thrust = max_thrust / max(engine_count, 1)
+	var thrust_force = effective_thrust * throttle
 	var force_vector = global_transform.basis.y * thrust_force
 	body.apply_central_force(force_vector)
 
-	# Apply steering as a lateral force offset from center
 	if steer_direction.length() > 0.0:
 		var gimbal_force = (global_transform.basis.x * steer_direction.x +
 							global_transform.basis.z * steer_direction.y) * max_gimbal
-		# Apply at the bottom of the rocket to create rotation
 		var nozzle_pos = global_transform.basis.y * -1.0
 		body.apply_force(gimbal_force, nozzle_pos)
+
+	if Engine.get_frames_drawn() % 60 == 0:
+		print("Thrust: ", thrust_force, " x ", engine_count, " engines")

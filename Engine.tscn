@@ -42,3 +42,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
 mesh = SubResource("CylinderMesh_o812k")
 
 [node name="EngineComponent" parent="." unique_id=884538555 instance=ExtResource("2_ifnxs")]
+
+[node name="LeftAttachment" type="Marker3D" parent="." unique_id=980022786]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 0, 0)
+
+[node name="RightAttachment" type="Marker3D" parent="." unique_id=932324388]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 0, 0)

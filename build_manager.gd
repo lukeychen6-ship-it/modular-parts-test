@@ -10,8 +10,8 @@ var snapped_to_port: Marker3D = null
 var occupied_ports: Array[Marker3D] = []
 var snap_threshold := 4.0
 var unsnap_threshold := 6.0
-var engine_count := 0
 var fuel_tank_count := 0
+var engine_count := 0
 
 @onready var camera := get_viewport().get_camera_3d()
 @onready var assembly_manager = get_tree().get_root().find_child("AssemblyManager", true, false)
@@ -33,12 +33,9 @@ func _input(event: InputEvent) -> void:
 		create_ghost()
 
 	if event.is_action_pressed("select_3") and parts_palette.size() > 2:
-		if engine_count < 1:
-			selected_part_type = parts_palette[2]
-			print("✅ SELECTED: Engine")
-			create_ghost()
-		else:
-			print("You can only have one engine")
+		selected_part_type = parts_palette[2]
+		print("✅ SELECTED: Engine")
+		create_ghost()
 
 	if event.is_action_pressed("clear_part"):
 		selected_part_type = null
@@ -103,48 +100,83 @@ func _process(_delta: float) -> void:
 	if not result:
 		return
 
-	# Handle unsnap first, before any snap search
 	if is_snapped:
 		var mouse_dist = snapped_to_port.global_position.distance_to(result.position)
 		if mouse_dist > unsnap_threshold:
 			is_snapped = false
 			snapped_to_port = null
 			ghost_part.global_position = result.position + Vector3(0, 2.0, 0)
-		# Whether we just unsnapped or are still snapped, return here.
-		# The ghost stays locked until the mouse moves far enough.
 		return
 
-	# Get ghost's bottom port
+	# Determine if ghost is an engine (has side ports)
+	var ghost_is_engine = ghost_part.has_method("get_side_attachment_points") and \
+						  ghost_part.get_side_attachment_points().size() > 0
+
+	# Get ghost's bottom port for top/bottom snapping
 	var ghost_bottom_port: Marker3D = null
 	if ghost_part.has_method("get_attachment_points"):
 		for port in ghost_part.get_attachment_points():
 			if port and "bottom" in port.name.to_lower():
 				ghost_bottom_port = port
 				break
-	if not ghost_bottom_port:
-		ghost_part.global_position = result.position + Vector3(0, 2.0, 0)
-		return
-	# Search for closest available (unoccupied) top port
+
 	var best_snap_distance := 9999.0
 	var best_target_port: Marker3D = null
-	
-	for part in get_tree().get_nodes_in_group("rocket_parts"):
-		if part == ghost_part or not part.has_method("get_attachment_points"):
-			continue
-		for port in part.get_attachment_points():
-			if port and "top" in port.name.to_lower() and port not in occupied_ports:
-				var distance = ghost_bottom_port.global_position.distance_to(port.global_position)
+	var best_ghost_port: Marker3D = null  # which ghost port to align with target
+	var best_is_side_snap := false
+
+	# --- Top/bottom snap search (all parts) ---
+	if ghost_bottom_port:
+		for part in get_tree().get_nodes_in_group("rocket_parts"):
+			if part == ghost_part or not part.has_method("get_attachment_points"):
+				continue
+			for port in part.get_attachment_points():
+				if port and "top" in port.name.to_lower() and port not in occupied_ports:
+					var distance = ghost_bottom_port.global_position.distance_to(port.global_position)
+					if distance < best_snap_distance:
+						best_snap_distance = distance
+						best_target_port = port
+						best_ghost_port = ghost_bottom_port
+						best_is_side_snap = false
+
+	# --- Side snap search (engines only) ---
+	if ghost_is_engine:
+		var ghost_sides = ghost_part.get_side_attachment_points()
+		var ghost_left = ghost_sides[0] if ghost_sides.size() > 0 else null
+		var ghost_right = ghost_sides[1] if ghost_sides.size() > 1 else null
+
+		for part in get_tree().get_nodes_in_group("rocket_parts"):
+			if part == ghost_part or not part.has_method("get_side_attachment_points"):
+				continue
+			for side_port in part.get_side_attachment_points():
+				if side_port in occupied_ports:
+					continue
+				# Match opposite sides: target left → ghost right, target right → ghost left
+				var matching_ghost_port: Marker3D = null
+				if "left" in side_port.name.to_lower() and ghost_right:
+					matching_ghost_port = ghost_right
+				elif "right" in side_port.name.to_lower() and ghost_left:
+					matching_ghost_port = ghost_left
+
+				if not matching_ghost_port:
+					continue
+
+				var distance = matching_ghost_port.global_position.distance_to(side_port.global_position)
 				if distance < best_snap_distance:
 					best_snap_distance = distance
-					best_target_port = port
-					
+					best_target_port = side_port
+					best_ghost_port = matching_ghost_port
+					best_is_side_snap = true
 
+	# --- Apply snap ---
 	if best_target_port and best_snap_distance < snap_threshold:
 		is_snapped = true
 		snapped_to_port = best_target_port
-		var origin_to_bottom = ghost_part.global_position - ghost_bottom_port.global_position
-		ghost_part.global_position = best_target_port.global_position + origin_to_bottom
-		ghost_part.global_rotation = best_target_port.global_transform.basis.get_euler()
+		var origin_to_port = ghost_part.global_position - best_ghost_port.global_position
+		ghost_part.global_position = best_target_port.global_position + origin_to_port
+		# For side snaps keep the ghost upright; for top snaps match target rotation
+		if not best_is_side_snap:
+			ghost_part.global_rotation = best_target_port.global_transform.basis.get_euler()
 	else:
 		ghost_part.global_position = result.position + Vector3(0, 2.0, 0)
 		
@@ -181,8 +213,8 @@ func place_part() -> void:
 	ghost_part.queue_free()
 	ghost_part = null
 
-	if selected_part_type == parts_palette[2]:
-		engine_count += 1
 	if selected_part_type == parts_palette[0]:
 		fuel_tank_count += 1
+	if selected_part_type == parts_palette[2]:
+		engine_count += 1
 	print("✅ Part placed!")
