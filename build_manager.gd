@@ -15,6 +15,8 @@ var engine_count := 0
 
 @onready var camera := get_viewport().get_camera_3d()
 @onready var assembly_manager = get_tree().get_root().find_child("AssemblyManager", true, false)
+@onready var sound_manager = get_tree().get_root().find_child("SoundManager", true, false)
+
 
 func _ready() -> void:
 	print("✅ BuildManager ready. Camera:", camera != null)
@@ -217,4 +219,5 @@ func place_part() -> void:
 		fuel_tank_count += 1
 	if selected_part_type == parts_palette[2]:
 		engine_count += 1
+	sound_manager.play_place()
 	print("✅ Part placed!")

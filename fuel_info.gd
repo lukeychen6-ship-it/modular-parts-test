@@ -4,6 +4,7 @@ var fuel_label: Label
 var current_fuel: float = 0.0
 var fuel_consumption_rate: float = 0.0
 var fuel_initialized: bool = false
+var fuel_per_tank: float = 150.0
 
 @onready var build_manager = get_tree().get_root().find_child("BuildManager", true, false)
 @onready var rocket_controller = get_tree().get_root().find_child("RocketController", true, false)
@@ -19,7 +20,7 @@ func _process(delta: float) -> void:
 
 	# Set starting fuel and consumption rate once when launched
 	if rocket_controller.is_launched and not fuel_initialized:
-		current_fuel = build_manager.fuel_tank_count * 100.0
+		current_fuel = build_manager.fuel_tank_count * fuel_per_tank
 
 		# Sum the mass of all engine bodies
 		var total_mass: float = 0.0
@@ -38,6 +39,6 @@ func _process(delta: float) -> void:
 
 	# Before launch, show full fuel amount
 	if not rocket_controller.is_launched:
-		current_fuel = build_manager.fuel_tank_count * 100.0
+		current_fuel = build_manager.fuel_tank_count * fuel_per_tank
 
 	fuel_label.text = "Fuel: " + str(snappedf(current_fuel, 0.1)) + "kg"

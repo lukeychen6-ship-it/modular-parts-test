@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://i5bjcpghqa7k" path="res://canvas_layer.tscn" id="12_7fi8l"]
 [ext_resource type="PackedScene" uid="uid://4mrhkafb7k4u" path="res://save_load_manager.tscn" id="13_ieqm0"]
 [ext_resource type="PackedScene" uid="uid://5y7g3puybvw0" path="res://inspiration_menu.tscn" id="14_dqr54"]
+[ext_resource type="Script" uid="uid://dwxmbxmjla53j" path="res://sound_manager.gd" id="14_escfo"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_7s7gv"]
 size = Vector3(10000, 1, 10000)
@@ -123,3 +124,6 @@ environment = SubResource("Environment_god1e")
 [node name="SaveLoadManager" parent="." unique_id=605963398 instance=ExtResource("13_ieqm0")]
 
 [node name="InspirationMenu" parent="." unique_id=1393272076 instance=ExtResource("14_dqr54")]
+
+[node name="SoundManager" type="Node" parent="." unique_id=1462711904]
+script = ExtResource("14_escfo")

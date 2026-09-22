@@ -5,7 +5,9 @@ class_name RocketController
 @export var engines: Array[RigidBody3D] = []
 @onready var spring_arm: SpringArm3D = get_parent().get_node("SpringArm3D")
 @onready var fuel_info = get_tree().get_root().find_child("FuelInfo", true, false)
+@onready var sound_manager = get_tree().get_root().find_child("SoundManager", true, false)
 
+var was_thrusting := false
 var is_launched: bool = false
 
 # Find if there's another part whose top port is very close to this bottom port
@@ -96,6 +98,12 @@ func _physics_process(_delta: float) -> void:
 
 	if Input.is_action_pressed("thrust") and fuel_info.current_fuel > 0:
 		main_throttle = 1.0
+	if main_throttle > 0.0 and not was_thrusting:
+		sound_manager.play_thrust_start()
+		was_thrusting = true
+	elif main_throttle == 0.0 and was_thrusting:
+		sound_manager.play_thrust_stop()
+		was_thrusting = false
 
 	# Read steering input
 	var steer = Vector2.ZERO
@@ -161,11 +169,13 @@ func _on_part_hit_ground(body: Node, hitting_part: RigidBody3D) -> void:
 		return
 	
 	break_apart()
+
 func break_apart() -> void:
 	if not is_launched:
 		return
 	
 	is_launched = false
+	sound_manager.play_crash()
 	print("💥 Rocket broke apart!")
 	
 	# Remove all joints
