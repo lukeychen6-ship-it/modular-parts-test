@@ -1,6 +1,4 @@
-extends BoxContainer
-
-var max_altitude_label: Label
+extends Label
 @export var max_altitude: float = 0.0
 @export var all_time_max_altitude: float = 0.0
 
@@ -10,15 +8,7 @@ var config = ConfigFile.new()
 @onready var assembly_manager = get_tree().get_root().find_child("AssemblyManager", true, false)
 
 func _ready() -> void:
-	max_altitude_label = Label.new()
-	max_altitude_label.text = "Highest Altitude: 0m"
-	add_child(max_altitude_label)
 	load_max_altitude()
-	
-	var reset_button = Button.new()
-	reset_button.text = "Reset Max Altitude"
-	reset_button.pressed.connect(reset_record)
-	add_child(reset_button)
 
 func _process(_delta: float) -> void:
 	if not assembly_manager or not assembly_manager.controller:
@@ -37,7 +27,7 @@ func _process(_delta: float) -> void:
 		all_time_max_altitude = max_altitude
 		save_max_altitude()
 	
-	max_altitude_label.text = "Highest Altitude: " + str(snappedf(max_altitude, 0.1)) + "m\nRecord: " + str(snappedf(all_time_max_altitude, 0.1)) + "m"
+	text = "Highest Altitude: " + str(snappedf(max_altitude, 0.1)) + "m\nRecord: " + str(snappedf(all_time_max_altitude, 0.1)) + "m"
 
 func save_max_altitude() -> void:
 	config.set_value("stats", "max_altitude", all_time_max_altitude)

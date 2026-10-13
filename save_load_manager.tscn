@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://4mrhkafb7k4u"]
 
-[ext_resource type="Script" uid="uid://bmfiyynykkj3q" path="res://save_load_manager.gd" id="1_aex5b"]
+[ext_resource type="Script" uid="uid://bmfiyynykkj3q" path="res://scripts/save_load_manager.gd" id="1_aex5b"]
 
 [node name="SaveLoadManager" type="CanvasLayer" unique_id=605963398]
 script = ExtResource("1_aex5b")

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://i5bjcpghqa7k"]
 
-[ext_resource type="Script" uid="uid://deka1oe3fgawd" path="res://achievement_manager.gd" id="1_v2lfg"]
+[ext_resource type="Script" uid="uid://deka1oe3fgawd" path="res://scripts/achievement_manager.gd" id="1_v2lfg"]
 
 [node name="CanvasLayer" type="CanvasLayer" unique_id=970274474]
 script = ExtResource("1_v2lfg")

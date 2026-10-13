@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dk4hylpjjpiwk"]
 
-[ext_resource type="Script" uid="uid://c3psn0i6alfd3" path="res://part.gd" id="1_k7fso"]
+[ext_resource type="Script" uid="uid://c3psn0i6alfd3" path="res://scripts/part.gd" id="1_k7fso"]
 [ext_resource type="PackedScene" uid="uid://5vxng7w3shgu" path="res://EngineComponent.tscn" id="2_ifnxs"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_6kawv"]

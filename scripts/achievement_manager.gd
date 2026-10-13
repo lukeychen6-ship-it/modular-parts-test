@@ -13,7 +13,7 @@ var achievements = [
 	[1000,   "Getting Somewhere", "🥈", "5000m"],
 	[5000,  "Getting Higher", "🥇", "13000m"],
 	[13000,  "Reached the Stratosphere",     "💎", "80000m"],
-	[15000,  "Reached Space", "🏆", "None"],
+	[80000,  "Reached Space", "🏆", "None"],
 ]
 
 @onready var assembly_manager = get_tree().get_root().find_child("AssemblyManager", true, false)

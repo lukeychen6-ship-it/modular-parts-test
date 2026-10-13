@@ -1,5 +1,4 @@
 # sound_manager.gd
-# ATTACH SOUNDS AT A LATER POINT
 extends Node
 
 # One player per sound so they can overlap freely

@@ -163,3 +163,4 @@ func load_inspiration(path: String) -> void:
 			build_manager.fuel_tank_count += 1
 
 	print("✅ Inspiration loaded: ", config.get_value("meta", "name", path))
+	

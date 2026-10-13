@@ -4,7 +4,7 @@ class_name RocketController
 @export var parts: Array[RigidBody3D] = []
 @export var engines: Array[RigidBody3D] = []
 @onready var spring_arm: SpringArm3D = get_parent().get_node("SpringArm3D")
-@onready var fuel_info = get_tree().get_root().find_child("FuelInfo", true, false)
+@onready var fuel_info_label = get_tree().get_root().find_child("FuelInfoLabel", true, false)
 @onready var sound_manager = get_tree().get_root().find_child("SoundManager", true, false)
 
 var was_thrusting := false
@@ -96,7 +96,7 @@ func _physics_process(_delta: float) -> void:
 
 	var main_throttle = 0
 
-	if Input.is_action_pressed("thrust") and fuel_info.current_fuel > 0:
+	if Input.is_action_pressed("thrust") and fuel_info_label.current_fuel > 0:
 		main_throttle = 1.0
 	if main_throttle > 0.0 and not was_thrusting:
 		sound_manager.play_thrust_start()

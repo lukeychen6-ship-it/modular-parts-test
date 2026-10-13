@@ -22,18 +22,7 @@ func _ready() -> void:
 				break
 	for part in controller.parts:
 		part.add_to_group("rocket_parts")
-	var restart_button = Button.new()
-	restart_button.text = "Restart (Escape)"
-	restart_button.pressed.connect(_on_restart_pressed)
-	
-	# Add to the UI — find your existing BoxContainer
-	var ui = get_tree().get_root().find_child("PartsMenu", true, false)
-	if ui:
-		ui.add_child(restart_button)
 
-func _on_restart_pressed() -> void:
-	get_tree().reload_current_scene()
-	
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("launch"):
 		print("Launch key pressed!")

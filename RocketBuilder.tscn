@@ -1,19 +1,26 @@
 [gd_scene format=3 uid="uid://jrmyjwr182fk"]
 
 [ext_resource type="PackedScene" uid="uid://dk4hylpjjpiwk" path="res://Engine.tscn" id="1_3ld7y"]
-[ext_resource type="Script" uid="uid://dxl73kporbw8h" path="res://assembly_manager.gd" id="1_v6vo6"]
-[ext_resource type="Script" uid="uid://bvy1se6kof7qr" path="res://rocket_controller.gd" id="2_7s7gv"]
+[ext_resource type="Script" uid="uid://dxl73kporbw8h" path="res://scripts/assembly_manager.gd" id="1_v6vo6"]
+[ext_resource type="Script" uid="uid://bvy1se6kof7qr" path="res://scripts/rocket_controller.gd" id="2_7s7gv"]
 [ext_resource type="PackedScene" uid="uid://cofdesbk3t8j7" path="res://NoseCone.tscn" id="2_xvabq"]
 [ext_resource type="PackedScene" uid="uid://byh0vvkflj2ya" path="res://FuelTank.tscn" id="3_v6vo6"]
 [ext_resource type="PackedScene" uid="uid://cxgaovv3f62o5" path="res://BuildManager.tscn" id="6_7s7gv"]
-[ext_resource type="Script" uid="uid://c7avyorp2xfkn" path="res://parts_menu.gd" id="7_l6gie"]
-[ext_resource type="Script" uid="uid://bnbxbjwabfr3b" path="res://altitude_info.gd" id="8_28f8q"]
-[ext_resource type="Script" uid="uid://cvm54wcvqby0h" path="res://max_altitude.gd" id="8_bkwor"]
-[ext_resource type="Script" uid="uid://bmnakol3pyg17" path="res://fuel_info.gd" id="8_s3624"]
+[ext_resource type="Script" uid="uid://deslnvy1etolu" path="res://scripts/restart_button.gd" id="8_escfo"]
+[ext_resource type="Script" uid="uid://deikkr12yhgom" path="res://scripts/save_rocket.gd" id="9_503y4"]
+[ext_resource type="Script" uid="uid://cf8dc7ru8cjdh" path="res://scripts/fuel_tank_button.gd" id="9_u3jwb"]
+[ext_resource type="Script" uid="uid://digalwgaic2xf" path="res://scripts/load_rocket.gd" id="10_n2dkm"]
+[ext_resource type="Script" uid="uid://dfyh0pasfletr" path="res://scripts/nose_cone_button.gd" id="10_oe78v"]
+[ext_resource type="Script" uid="uid://bt7ei8mvs0rs8" path="res://scripts/engine_button.gd" id="11_6e441"]
 [ext_resource type="PackedScene" uid="uid://i5bjcpghqa7k" path="res://canvas_layer.tscn" id="12_7fi8l"]
 [ext_resource type="PackedScene" uid="uid://4mrhkafb7k4u" path="res://save_load_manager.tscn" id="13_ieqm0"]
+[ext_resource type="Script" uid="uid://nnj37my633xg" path="res://scripts/ideas_menu.gd" id="13_u3jwb"]
 [ext_resource type="PackedScene" uid="uid://5y7g3puybvw0" path="res://inspiration_menu.tscn" id="14_dqr54"]
-[ext_resource type="Script" uid="uid://dwxmbxmjla53j" path="res://sound_manager.gd" id="14_escfo"]
+[ext_resource type="Script" uid="uid://dwxmbxmjla53j" path="res://scripts/sound_manager.gd" id="14_escfo"]
+[ext_resource type="Script" uid="uid://c0f42ivkjbwgn" path="res://scripts/max_altitude_label.gd" id="15_6e441"]
+[ext_resource type="Script" uid="uid://cnn4euyr0sr7x" path="res://scripts/reset_max_altitude.gd" id="16_qreys"]
+[ext_resource type="Script" uid="uid://dfbpppuy4t0qq" path="res://scripts/fuel_info_label.gd" id="17_6e441"]
+[ext_resource type="Script" uid="uid://b0iwraicwtn47" path="res://scripts/position_info_label.gd" id="18_6e441"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_7s7gv"]
 size = Vector3(10000, 1, 10000)
@@ -67,63 +74,124 @@ mesh = SubResource("PlaneMesh_l6gie")
 transform = Transform3D(-1, -8.742278e-08, 0, -3.821371e-15, 4.371139e-08, 1, -8.742278e-08, 1, -4.371139e-08, 0, 16, 0)
 shadow_enabled = true
 
-[node name="BoxContainer" type="BoxContainer" parent="." unique_id=1884986113]
+[node name="BottomMenuText" type="BoxContainer" parent="." unique_id=1884986113]
 anchors_preset = -1
-anchor_left = 0.476
-anchor_top = 0.5
-anchor_right = 0.58500004
-anchor_bottom = 0.629
-offset_left = -548.352
-offset_top = 170.0
-offset_right = 480.07996
-offset_bottom = 187.84
+anchor_top = 0.762
+anchor_right = 1.0
+anchor_bottom = 0.919
+offset_top = 0.22399902
+offset_right = 2.0
+offset_bottom = -0.08001709
 alignment = 1
 
-[node name="Label" type="Label" parent="BoxContainer" unique_id=1248496312]
+[node name="Label" type="Label" parent="BottomMenuText" unique_id=1248496312]
 modulate = Color(0, 0, 0, 1)
 layout_mode = 2
 text = "Items:"
 
-[node name="PartsMenu" type="BoxContainer" parent="." unique_id=2041891968]
+[node name="BottomMenu" type="BoxContainer" parent="." unique_id=2041891968]
 anchors_preset = -1
-anchor_right = 0.163
-anchor_bottom = 0.116000004
-offset_left = 2.0
-offset_top = 564.0
-offset_right = 964.224
-offset_bottom = 573.83203
+anchor_left = 0.087000005
+anchor_top = 0.89800006
+anchor_right = 0.92200005
+anchor_bottom = 0.94600004
+offset_left = -0.22400665
+offset_top = -11.904053
+offset_right = -3.144043
+offset_bottom = 32.992004
 alignment = 1
-script = ExtResource("7_l6gie")
+
+[node name="RestartButton" type="Button" parent="BottomMenu" unique_id=1310033302]
+layout_mode = 2
+action_mode = 0
+text = "Restart (Escape)"
+script = ExtResource("8_escfo")
+
+[node name="FuelTankButton" type="Button" parent="BottomMenu" unique_id=691171571]
+layout_mode = 2
+text = "Fuel Tank (1)"
+script = ExtResource("9_u3jwb")
+
+[node name="NoseConeButton" type="Button" parent="BottomMenu" unique_id=428432667]
+layout_mode = 2
+text = "Nose Cone (2)"
+script = ExtResource("10_oe78v")
+
+[node name="EngineButton" type="Button" parent="BottomMenu" unique_id=589279543]
+layout_mode = 2
+text = "Engine (3)"
+script = ExtResource("11_6e441")
+
+[node name="SaveRocket" type="Button" parent="BottomMenu" unique_id=1735470930]
+layout_mode = 2
+text = "Save"
+script = ExtResource("9_503y4")
+
+[node name="LoadRocket" type="Button" parent="BottomMenu" unique_id=1526544623]
+layout_mode = 2
+text = "Load"
+script = ExtResource("10_n2dkm")
+
+[node name="IdeasMenu" type="Button" parent="BottomMenu" unique_id=1227276345]
+layout_mode = 2
+text = "Ideas"
+script = ExtResource("13_u3jwb")
 
 [node name="MaxAltitude" type="BoxContainer" parent="." unique_id=9958647]
-offset_left = 1.0
-offset_top = 220.0
-offset_right = 226.0
-offset_bottom = 306.0
-script = ExtResource("8_bkwor")
+anchors_preset = -1
+anchor_top = 0.34
+anchor_right = 0.254
+anchor_bottom = 0.47200003
+offset_top = -0.32000732
+offset_right = -0.6080017
+offset_bottom = 0.14398193
+
+[node name="MaxAltitudeLabel" type="Label" parent="MaxAltitude" unique_id=1002280783]
+layout_mode = 2
+text = "Highest Altitude: 
+Record:"
+script = ExtResource("15_6e441")
+
+[node name="ResetMaxAltitude" type="Button" parent="MaxAltitude" unique_id=901856364]
+layout_mode = 2
+text = "Reset Max Altitude"
+script = ExtResource("16_qreys")
+
+[node name="PositionInfo" type="BoxContainer" parent="." unique_id=68423636]
+anchors_preset = -1
+anchor_right = 0.17
+anchor_bottom = 0.128
+offset_right = 0.16000366
+offset_bottom = 0.055999756
+
+[node name="PositionInfoLabel" type="Label" parent="PositionInfo" unique_id=729274551]
+layout_mode = 2
+text = "Altitude: 0m
+Position: (0,0)"
+script = ExtResource("18_6e441")
 
 [node name="FuelInfo" type="BoxContainer" parent="." unique_id=102227866]
-offset_left = -2.0
-offset_top = 124.0
-offset_right = 156.0
-offset_bottom = 236.0
-script = ExtResource("8_s3624")
-
-[node name="AltitudeInfo" type="BoxContainer" parent="." unique_id=1605232439]
 anchors_preset = -1
-anchor_right = 1.0
-anchor_bottom = 0.17300001
-offset_bottom = -0.104003906
-script = ExtResource("8_28f8q")
+anchor_top = 0.19100001
+anchor_right = 0.135
+anchor_bottom = 0.33200002
+offset_top = 0.231987
+offset_right = 2.4799957
+offset_bottom = -0.13601685
+
+[node name="FuelInfoLabel" type="Label" parent="FuelInfo" unique_id=88973581]
+layout_mode = 2
+text = "Fuel: "
+script = ExtResource("17_6e441")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=513293081]
 environment = SubResource("Environment_god1e")
 
 [node name="AchievementManager" parent="." unique_id=970274474 instance=ExtResource("12_7fi8l")]
 
-[node name="SaveLoadManager" parent="." unique_id=605963398 instance=ExtResource("13_ieqm0")]
-
 [node name="InspirationMenu" parent="." unique_id=1393272076 instance=ExtResource("14_dqr54")]
+
+[node name="SaveLoadManager" parent="." unique_id=605963398 instance=ExtResource("13_ieqm0")]
 
 [node name="SoundManager" type="Node" parent="." unique_id=1462711904]
 script = ExtResource("14_escfo")
